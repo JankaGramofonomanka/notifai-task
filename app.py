@@ -6,6 +6,7 @@ from pymongo import MongoClient
 
 from decorators import convert
 import database_interaction as db
+import constants as c
 
 app = Flask(__name__)
 
@@ -55,10 +56,10 @@ def view(post_id : int):
         return jsonify(post)
     
     except db.DataDoesNotExist:
-        return jsonify("Post does not exist."), 404
+        return jsonify(c.POST_NOT_FOUD_MSG), 404
     
     except db.DatabaseFormatError:
-        return jsonify("Data is corrupt."), 500
+        return jsonify(c.DATABASE_FORMAT_ERROR_MSG), 500
 
 
 
@@ -70,13 +71,13 @@ def create(post_id : int):
         content = request.json      # type: str
         if type(content) == str and len(content) > 0:
             db.create_post(post_id, content)
-            return jsonify("The post has been created"), 201
+            return jsonify(c.POST_CREATED_MSG), 201
 
         else:
-            return jsonify("Request does not contain a valid post."), 400
+            return jsonify(c.INVALID_CONTENT_MSG), 400
 
     except DuplicateKeyError:
-        return jsonify("Post alredy exists."), 400
+        return jsonify(c.POST_ALREDY_EXISTS_MSG), 400
 
 
 
@@ -87,15 +88,15 @@ def edit(post_id : int):
     try:
         content = request.json      # type: str
         if type(content) == str and len(content) > 0:
-            
+
             db.update_post(post_id, content)
-            return jsonify("The post has been updated"), 200
+            return jsonify(c.POST_UPDATED_MSG), 200
 
         else:
-            return jsonify("Request does not contain a valid post."), 400
+            return jsonify(c.INVALID_CONTENT_MSG), 400
 
     except db.DataDoesNotExist:
-        return jsonify("Post does not exist."), 404
+        return jsonify(c.POST_NOT_FOUD_MSG), 404
 
 
 
@@ -105,10 +106,10 @@ def delete(post_id : int):
 
     try:
         db.delete_post(post_id)
-        return jsonify("The post has been deleted"), 200
+        return jsonify(c.POST_DELETED_MSG), 200
     
     except db.DataDoesNotExist:
-        return jsonify("Post does not exist."), 404
+        return jsonify(c.POST_NOT_FOUD_MSG), 404
 
 
 if __name__ == "__main__":

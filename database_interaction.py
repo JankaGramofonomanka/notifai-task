@@ -11,12 +11,14 @@ from types_and_schemas import post_in_db_schema
 from exceptions import DatabaseFormatError
 from exceptions import DataDoesNotExist
 
+import constants as c
+
 
 
 def get_collection():
     cluster = MongoClient(os.environ["MONGODB_URI"])
 
-    return cluster["notifai-task-db"]["posts"]
+    return cluster[c.DATABASE_NAME][c.POST_COLLECTION_NAME]
 
 
 
