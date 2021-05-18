@@ -2,7 +2,6 @@ import os
 
 
 from pymongo import MongoClient
-from pymongo.errors import DuplicateKeyError
 from cerberus import Validator
 
 from types_and_schemas import PostInDB
