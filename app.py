@@ -1,9 +1,11 @@
 import os
 
-from flask import Flask, make_response
+from flask import Flask, make_response, jsonify
 import pymongo
 from pymongo import MongoClient
 
+from decorators import convert
+import database_interaction as db
 
 app = Flask(__name__)
 
@@ -37,9 +39,22 @@ def env_test():
     return os.environ["EXAMPLE_ENV_VAR"]
 
 
+@app.route("/<post_id>/view", methods=['GET'])
+@convert(post_id=int)
+def view(post_id : int):
+    
+    try:
+        post = db.get_post(post_id)
+        db.increment_views(post_id)
+
+        return jsonify(post)
+    
+    except db.DataDoesNotExist:
+        return jsonify("Post does not exist."), 404
+
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
 
 
 
