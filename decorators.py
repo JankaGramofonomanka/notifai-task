@@ -30,6 +30,7 @@ def convert(**kwtypes : type):
 
             return func(**kwargs)
         
+        real_func.__name__ = func.__name__
         return real_func
     
     return decorator

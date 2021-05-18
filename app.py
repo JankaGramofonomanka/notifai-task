@@ -70,6 +70,8 @@ def create(post_id : int):
         content = request.json      # type: str
         if type(content) == str:
             db.create_post(post_id, content)
+            return jsonify("The post has been created"), 201
+            
         else:
             return jsonify("Request does not contain a valid post."), 400
 
