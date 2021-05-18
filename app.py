@@ -68,10 +68,10 @@ def create(post_id : int):
 
     try:
         content = request.json      # type: str
-        if type(content) == str:
+        if type(content) == str and len(content) > 0:
             db.create_post(post_id, content)
             return jsonify("The post has been created"), 201
-            
+
         else:
             return jsonify("Request does not contain a valid post."), 400
 
@@ -79,6 +79,36 @@ def create(post_id : int):
         return jsonify("Post alredy exists."), 400
 
 
+
+@app.route("/<post_id>/edit", methods=['PUT'])
+@convert(post_id=int)
+def edit(post_id : int):
+    
+    try:
+        content = request.json      # type: str
+        if type(content) == str and len(content) > 0:
+            
+            db.update_post(post_id, content)
+            return jsonify("The post has been updated"), 200
+
+        else:
+            return jsonify("Request does not contain a valid post."), 400
+
+    except db.DataDoesNotExist:
+        return jsonify("Post does not exist."), 404
+
+
+
+@app.route("/<post_id>/delete", methods=['DELETE'])
+@convert(post_id=int)
+def delete(post_id : int):
+
+    try:
+        db.delete_post(post_id)
+        return jsonify("The post has been deleted"), 200
+    
+    except db.DataDoesNotExist:
+        return jsonify("Post does not exist."), 404
 
 
 if __name__ == "__main__":
