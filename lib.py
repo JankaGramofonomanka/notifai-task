@@ -1,5 +1,6 @@
 from flask import jsonify
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from cerberus import Validator
 
 from types_and_schemas import PostInDB
@@ -26,7 +27,7 @@ def get_collection():
 
 
 
-def get_post(post_id : int) -> PostWithViews:
+def get_post(post_id : ObjectId) -> PostWithViews:
 
     collection = get_collection()
     post = collection.find_one({"_id": post_id})    # type: PostInDB
@@ -49,7 +50,7 @@ def get_post(post_id : int) -> PostWithViews:
 
 
 
-def increment_views(post_id : int) -> None:
+def increment_views(post_id : ObjectId) -> None:
 
     collection = get_collection()
     result = collection.update_one({"_id": post_id}, {"$inc": {"views": 1}})
@@ -59,13 +60,16 @@ def increment_views(post_id : int) -> None:
 
 
 
-def create_post(post_id : int, content : str) -> None:
+def create_post(content : str) -> ObjectId:
     collection = get_collection()
-    collection.insert_one({"_id": post_id, "content": content, "views": 0})
+    result = collection.insert_one({"content": content, "views": 0})
+    post_id = result.inserted_id    # type: ObjectId
+
+    return post_id
 
 
 
-def update_post(post_id : int, content : str) -> None:
+def update_post(post_id : ObjectId, content : str) -> None:
 
     collection = get_collection()
     result = collection.update_one(
@@ -78,7 +82,7 @@ def update_post(post_id : int, content : str) -> None:
 
 
 
-def delete_post(post_id : int) -> None:
+def delete_post(post_id : ObjectId) -> None:
     collection = get_collection()
     result = collection.delete_one({"_id": post_id})
     

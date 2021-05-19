@@ -5,6 +5,8 @@ from flask import make_response, request
 from cerberus import Validator
 from cerberus.validator import DocumentError
 import jwt
+from bson.objectid import ObjectId
+from bson.errors import InvalidId
 
 import constants as c
 import lib
@@ -46,6 +48,11 @@ def convert(**kwtypes : type):
 
 
 def require_token(func):
+    """
+    Checks if a valid acces token is provided, 
+    if not, returns an 'Unauthorized' response.
+    """
+
     @wraps(func)
     def decorated(*args, **kwargs):
 
@@ -70,12 +77,16 @@ def require_token(func):
 
 
 def assert_json(schema : Dict[str, Any], error_msg : str, error_code : int):
+    """
+    Asserts, that the body of the request is in json format and it has the 
+    correct schema
+    """
 
     def decorator(func):
         @wraps(func)
         def decorated(*args, **kwargs):
 
-            validator = Validator(schema)
+            validator = Validator(schema, allow_unknown=True)
 
             data = request.json
 
@@ -95,5 +106,42 @@ def assert_json(schema : Dict[str, Any], error_msg : str, error_code : int):
     return decorator
 
 
+def assert_id(func):
+    """
+    Converts the keyword argument `post_id` to `ObjectId` and if it is 
+    impossible, returns an error message
+    """
+
+    @wraps(func)
+    def decorated(post_id : str, **kwargs):
+
+        print(post_id)
+        print(type(post_id))
+        print(kwargs)
+
+
+        bad_response = lib.jsonify_msg(c.INVALID_ID_MSG), 400
+
+        if len(post_id) != 24:
+            return bad_response
+        
+        # as far as I know, the above condition is enough to ensure the 
+        # validity of an id, but just in case I put this in a try-except block
+        try:
+            post_id = ObjectId(post_id)
+        
+        except InvalidId:
+            return bad_response
+
+        except TypeError:
+            return bad_response
+        
+        except ValueError:
+            return bad_response
+        
+
+        return func(post_id=post_id, **kwargs)
+    
+    return decorated
 
 

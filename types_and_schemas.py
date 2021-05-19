@@ -1,11 +1,12 @@
 from mypy_extensions import TypedDict
+from bson.objectid import ObjectId
 
 import constants as c
 
 PostInDB = TypedDict(
     "PostInDB",
     {
-        "_id"       : int,
+        "_id"       : ObjectId,
         "content"   : str,
         "views"     : int,
     }
@@ -20,17 +21,15 @@ PostWithViews = TypedDict(
 )
 
 post_in_db_schema = {
-    "_id":      {"type": "integer", "required": True},
-    "content":  {"type": "string",  "required": True},
-    "views":    {"type": "integer", "required": True},
+    "_id":      {"required": True},
+    "content":  {"required": True, "type": "string"},
+    "views":    {"required": True, "type": "integer"},
 }
 
 
 
 
 JSONMessage     = TypedDict("JSONMessage",  {"message"  : str})
-JSONPassword    = TypedDict("JSONPassword", {"password" : str})
-PostContent     = TypedDict("PostContent",  {"content"  : str})
 
 json_msg_schema     = {"message":   {"type": "string", "required": True}}
 json_passwd_schema  = {"password":  {"type": "string", "required": True}}

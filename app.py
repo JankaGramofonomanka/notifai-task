@@ -1,12 +1,11 @@
-import os
 import datetime
 
 from flask import Flask, make_response, jsonify, request
 from pymongo.errors import DuplicateKeyError
-from pymongo import MongoClient
+from bson.objectid import ObjectId
 import jwt
 
-from decorators import convert, require_token, assert_json
+from decorators import require_token, assert_json, assert_id
 import lib
 import constants as c
 from types_and_schemas import json_passwd_schema
@@ -16,14 +15,14 @@ app = Flask(__name__)
 
 
 
+
 @app.route("/")
 def hello():
     return "Hello!"
 
 
 
-
-
+# -----------------------------------------------------------------------------
 @app.route("/login", methods=["POST"])
 @assert_json(json_passwd_schema, c.NO_PASSWORD_MSG, 401)
 def login():
@@ -42,9 +41,10 @@ def login():
 
 
 
+# -----------------------------------------------------------------------------
 @app.route("/<post_id>", methods=["GET"])
-@convert(post_id=int)
-def view(post_id : int):
+@assert_id
+def view(post_id : ObjectId):
     
     try:
         post = lib.get_post(post_id)
@@ -60,27 +60,28 @@ def view(post_id : int):
 
 
 
-@app.route("/<post_id>", methods=["POST"])
+# -----------------------------------------------------------------------------
+@app.route("/create", methods=["POST"])
 @require_token
 @assert_json(post_content_schema, c.INVALID_CONTENT_MSG, 400)
-@convert(post_id=int)
-def create(post_id : int):
+def create():
 
     try:
         content = request.json["content"]   # type: str
-        lib.create_post(post_id, content)
-        return lib.jsonify_msg(c.POST_CREATED_MSG), 201
+        post_id = lib.create_post(content)
+        return jsonify({"id": str(post_id)}), 201
 
     except DuplicateKeyError:
         return lib.jsonify_msg(c.POST_ALREDY_EXISTS_MSG), 400
 
 
 
+# -----------------------------------------------------------------------------
 @app.route("/<post_id>", methods=["PUT"])
 @require_token
+@assert_id
 @assert_json(post_content_schema, c.INVALID_CONTENT_MSG, 400)
-@convert(post_id=int)
-def edit(post_id : int):
+def edit(post_id : ObjectId):
     
     try:
         content = request.json["content"]   # type: str
@@ -92,10 +93,11 @@ def edit(post_id : int):
 
 
 
+# -----------------------------------------------------------------------------
 @app.route("/<post_id>", methods=["DELETE"])
 @require_token
-@convert(post_id=int)
-def delete(post_id : int):
+@assert_id
+def delete(post_id : ObjectId):
 
     try:
         lib.delete_post(post_id)
@@ -106,6 +108,7 @@ def delete(post_id : int):
 
 
 
+# -----------------------------------------------------------------------------
 if __name__ == "__main__":
     app.run(debug=True)
 
