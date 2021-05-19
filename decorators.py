@@ -15,7 +15,7 @@ import lib
 
 
 
-
+# -----------------------------------------------------------------------------
 def convert(**kwtypes : type):
     """
     Returns a decortor that converts string key word arguments of a function 
@@ -48,6 +48,9 @@ def convert(**kwtypes : type):
     return decorator
 
 
+
+
+# -----------------------------------------------------------------------------
 def require_token(func):
     """
     Checks if a valid acces token is provided, 
@@ -77,6 +80,7 @@ def require_token(func):
 
 
 
+# -----------------------------------------------------------------------------
 def assert_json(schema : Dict[str, Any], error_msg : str, error_code : int):
     """
     Asserts, that the body of the request is in json format and it has the 
@@ -107,6 +111,9 @@ def assert_json(schema : Dict[str, Any], error_msg : str, error_code : int):
     return decorator
 
 
+
+
+# -----------------------------------------------------------------------------
 def assert_id(func):
     """
     Converts the keyword argument `post_id` to `ObjectId` and if it is 
@@ -132,7 +139,8 @@ def assert_id(func):
             return bad_response
         
         # as far as I know, the above condition is enough to ensure the 
-        # validity of an id, but just in case I put this in a try-except block
+        # validity of `post_id`, but just in case I put this in a try-except 
+        # block
         try:
             post_id = ObjectId(post_id)
         
