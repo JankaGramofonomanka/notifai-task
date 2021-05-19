@@ -123,6 +123,8 @@ def assert_id(func):
 
         bad_response = lib.jsonify_msg(c.INVALID_ID_MSG), 400
 
+        # check if `post_id` represents a hexadecimal number
+        # and has the right length
         if (
             len(post_id) != 24 
             or any(char not in hexdigits for char in post_id)
