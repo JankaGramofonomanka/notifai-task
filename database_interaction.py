@@ -1,6 +1,3 @@
-import os
-
-
 from pymongo import MongoClient
 from cerberus import Validator
 
@@ -16,7 +13,7 @@ import constants as c
 
 
 def get_collection():
-    cluster = MongoClient(os.environ["MONGODB_URI"])
+    cluster = MongoClient(c.MONGODB_URI)
 
     return cluster[c.DATABASE_NAME][c.POST_COLLECTION_NAME]
 

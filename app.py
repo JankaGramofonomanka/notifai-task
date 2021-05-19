@@ -1,10 +1,12 @@
 import os
+import datetime
 
 from flask import Flask, make_response, jsonify, request
 from pymongo.errors import DuplicateKeyError
 from pymongo import MongoClient
+import jwt
 
-from decorators import convert
+from decorators import convert, require_token
 import database_interaction as db
 import constants as c
 
@@ -22,7 +24,7 @@ def hello():
 def db_test():
 
     try:
-        cluster = MongoClient(os.environ["MONGODB_URI"])
+        cluster = MongoClient(c.MONGODB_URI)
 
         db = cluster["notifai-task-db"]
         col = db["test-collection"]
@@ -40,8 +42,39 @@ def db_test():
 
 
 @app.route("/env_test")
+@require_token
 def env_test():
     return os.environ["EXAMPLE_ENV_VAR"]
+
+
+
+@app.route("/login")
+def login():
+    try:
+        data = request.json
+        password = data["password"]
+    
+    except KeyError:
+        return jsonify(c.NO_PASSWORD_MSG), 401
+    
+    except TypeError:
+        return jsonify(c.NO_PASSWORD_MSG), 401
+
+
+    if password == c.PASSWORD:
+        data = {
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30),
+        }
+        token = jwt.encode(data, c.SECRET_KEY)
+
+        return jsonify({"token": token.decode("UTF-8")})
+    
+    else:
+        return (
+            jsonify("Could not verify"), 
+            401, 
+            {"WWW-Authenticate": 'Basic realm="Login Required"'},
+        )
 
 
 

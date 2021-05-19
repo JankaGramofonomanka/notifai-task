@@ -1,4 +1,9 @@
-from flask import make_response
+from functools import wraps
+
+from flask import make_response, request, jsonify
+import jwt
+
+import constants as c
 
 
 
@@ -15,7 +20,8 @@ def convert(**kwtypes : type):
     
     def decorator(func):
         
-        def real_func(**kwargs : str):
+        @wraps(func)
+        def decorated(**kwargs : str):
             
             for arg, type_of_arg in kwtypes.items():
 
@@ -30,10 +36,28 @@ def convert(**kwtypes : type):
 
             return func(**kwargs)
         
-        real_func.__name__ = func.__name__
-        return real_func
+        return decorated
     
     return decorator
 
 
+def require_token(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
 
+        token = None
+        if 'x-access-tokens' in request.headers:
+            token = request.headers['x-access-tokens']
+        
+        if not token:
+            return jsonify({"message": "Token is missing."}), 401
+        
+        try:
+            data = jwt.decode(token, c.SECRET_KEY)
+
+            return func(*args, **kwargs)
+
+        except:
+            return jsonify({"message": "Token is invalid."}), 401
+
+    return decorated
