@@ -1,5 +1,6 @@
 from functools import wraps
 from typing import Dict, Any
+from string import hexdigits
 
 from flask import make_response, request
 from cerberus import Validator
@@ -122,7 +123,10 @@ def assert_id(func):
 
         bad_response = lib.jsonify_msg(c.INVALID_ID_MSG), 400
 
-        if len(post_id) != 24:
+        if (
+            len(post_id) != 24 
+            or any(char not in hexdigits for char in post_id)
+        ):
             return bad_response
         
         # as far as I know, the above condition is enough to ensure the 
