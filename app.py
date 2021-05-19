@@ -86,6 +86,7 @@ def view(post_id : int):
 
 
 @app.route("/<post_id>/create", methods=['POST'])
+@require_token
 @assert_json(post_content_schema, c.INVALID_CONTENT_MSG, 400)
 @convert(post_id=int)
 def create(post_id : int):
@@ -101,6 +102,7 @@ def create(post_id : int):
 
 
 @app.route("/<post_id>/edit", methods=['PUT'])
+@require_token
 @assert_json(post_content_schema, c.INVALID_CONTENT_MSG, 400)
 @convert(post_id=int)
 def edit(post_id : int):
@@ -116,6 +118,7 @@ def edit(post_id : int):
 
 
 @app.route("/<post_id>/delete", methods=['DELETE'])
+@require_token
 @convert(post_id=int)
 def delete(post_id : int):
 
