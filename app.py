@@ -1,6 +1,6 @@
 import datetime
 
-from flask import Flask, make_response, jsonify, request
+from flask import Flask, jsonify, request
 from pymongo.errors import DuplicateKeyError
 from bson.objectid import ObjectId
 import jwt
