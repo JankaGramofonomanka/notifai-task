@@ -1,4 +1,5 @@
 from functools import wraps
+from typing import Dict, Any
 
 from flask import make_response, request
 from cerberus import Validator
@@ -68,7 +69,7 @@ def require_token(func):
 
 
 
-def assert_json(schema, error_msg, error_code):
+def assert_json(schema : Dict[str, Any], error_msg : str, error_code : int):
 
     def decorator(func):
         @wraps(func)
