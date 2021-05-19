@@ -21,6 +21,9 @@ def jsonify_msg(msg : str):
     return jsonify(json_msg(msg))
 
 def get_collection():
+    """
+    Returns the collection of posts.
+    """
     cluster = MongoClient(c.MONGODB_URI)
 
     return cluster[c.DATABASE_NAME][c.POST_COLLECTION_NAME]
@@ -28,6 +31,12 @@ def get_collection():
 
 
 def get_post(post_id : ObjectId) -> PostWithViews:
+    """
+    Returns a post with that has id `post_id`.
+    - If such posts does not exist, an exception is raised.
+    - If the post returned by the database is in a wrong format, 
+      an exception is raised.
+    """
 
     collection = get_collection()
     post = collection.find_one({"_id": post_id})    # type: PostInDB
@@ -51,6 +60,10 @@ def get_post(post_id : ObjectId) -> PostWithViews:
 
 
 def increment_views(post_id : ObjectId) -> None:
+    """
+    Increments the number of views of the post that has id `post_id` by 1.
+    If such posts does not exist, an exception is raised.
+    """
 
     collection = get_collection()
     result = collection.update_one({"_id": post_id}, {"$inc": {"views": 1}})
@@ -61,6 +74,10 @@ def increment_views(post_id : ObjectId) -> None:
 
 
 def create_post(content : str) -> ObjectId:
+    """
+    Inserts a new post filled it with `content` to the database and 
+    returns the id of that post.
+    """
     collection = get_collection()
     result = collection.insert_one({"content": content, "views": 0})
     post_id = result.inserted_id    # type: ObjectId
@@ -70,6 +87,10 @@ def create_post(content : str) -> ObjectId:
 
 
 def update_post(post_id : ObjectId, content : str) -> None:
+    """
+    Updates the contents of the post that has id `post_id` with `content`.
+    If such posts does not exist, an exception is raised.
+    """
 
     collection = get_collection()
     result = collection.update_one(
@@ -83,6 +104,11 @@ def update_post(post_id : ObjectId, content : str) -> None:
 
 
 def delete_post(post_id : ObjectId) -> None:
+    """
+    Deletes the post that has id `post_id`.
+    If such posts does not exist, an exception is raised.
+    """
+
     collection = get_collection()
     result = collection.delete_one({"_id": post_id})
     
