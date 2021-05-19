@@ -22,31 +22,6 @@ def hello():
 
 
 
-@app.route("/db_test")
-def db_test():
-
-    try:
-        cluster = MongoClient(c.MONGODB_URI)
-
-        collection = cluster[c.DATABASE_NAME]["test-collection"]
-
-        collection.update_many(
-            {"name": "JOOOHN", "surname": "CENAAAAA!!!!!"}, 
-            {"$inc": {"score": 5000}}
-        )
-
-        return "success"
-    
-    except Exception:
-        return make_response("internal error", 500)
-
-
-
-@app.route("/env_test")
-@require_token
-def env_test():
-    return os.environ["EXAMPLE_ENV_VAR"]
-
 
 
 @app.route("/login")
