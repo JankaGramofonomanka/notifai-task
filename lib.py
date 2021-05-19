@@ -1,5 +1,3 @@
-from typing import TypedDict
-
 from flask import jsonify
 from pymongo import MongoClient
 from cerberus import Validator

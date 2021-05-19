@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import make_response, request, jsonify
+from flask import make_response, request
 from cerberus import Validator
 from cerberus.validator import DocumentError
 import jwt
@@ -53,12 +53,13 @@ def require_token(func):
             token = request.headers['x-access-tokens']
         
         if not token:
-            return jsonify({"message": "Token is missing."}), 401
+            return lib.jsonify_msg("Token is missing."), 401
         
         try:
             data = jwt.decode(token, c.SECRET_KEY)
+
         except:
-            return jsonify(lib.json_msg("Token is invalid.")), 401
+            return lib.jsonify_msg("Token is invalid."), 401
 
         return func(*args, **kwargs)
 
@@ -82,10 +83,10 @@ def assert_json(schema, error_msg, error_code):
                     return func(*args, **kwargs)
                     
                 else:
-                    return jsonify(lib.json_msg(error_msg)), error_code
+                    return lib.jsonify_msg(error_msg), error_code
 
             except DocumentError:
-                return jsonify(lib.json_msg(error_msg)), error_code
+                return lib.jsonify_msg(error_msg), error_code
                 
     
         return decorated
