@@ -24,7 +24,7 @@ def hello():
 
 
 
-@app.route("/login")
+@app.route("/login", methods=["POST"])
 @assert_json(json_passwd_schema, c.NO_PASSWORD_MSG, 401)
 def login():
     
@@ -42,7 +42,7 @@ def login():
 
 
 
-@app.route("/<post_id>/view", methods=['GET'])
+@app.route("/<post_id>", methods=["GET"])
 @convert(post_id=int)
 def view(post_id : int):
     
@@ -60,7 +60,7 @@ def view(post_id : int):
 
 
 
-@app.route("/<post_id>/create", methods=['POST'])
+@app.route("/<post_id>", methods=["POST"])
 @require_token
 @assert_json(post_content_schema, c.INVALID_CONTENT_MSG, 400)
 @convert(post_id=int)
@@ -76,7 +76,7 @@ def create(post_id : int):
 
 
 
-@app.route("/<post_id>/edit", methods=['PUT'])
+@app.route("/<post_id>", methods=["PUT"])
 @require_token
 @assert_json(post_content_schema, c.INVALID_CONTENT_MSG, 400)
 @convert(post_id=int)
@@ -92,7 +92,7 @@ def edit(post_id : int):
 
 
 
-@app.route("/<post_id>/delete", methods=['DELETE'])
+@app.route("/<post_id>", methods=["DELETE"])
 @require_token
 @convert(post_id=int)
 def delete(post_id : int):
