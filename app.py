@@ -6,9 +6,11 @@ from pymongo.errors import DuplicateKeyError
 from pymongo import MongoClient
 import jwt
 
-from decorators import convert, require_token
-import database_interaction as db
+from decorators import convert, require_token, assert_json
+import lib
 import constants as c
+from types_and_schemas import json_passwd_schema
+from types_and_schemas import post_content_schema
 
 app = Flask(__name__)
 
@@ -26,10 +28,9 @@ def db_test():
     try:
         cluster = MongoClient(c.MONGODB_URI)
 
-        db = cluster["notifai-task-db"]
-        col = db["test-collection"]
+        collection = cluster[c.DATABASE_NAME]["test-collection"]
 
-        col.update_many(
+        collection.update_many(
             {"name": "JOOOHN", "surname": "CENAAAAA!!!!!"}, 
             {"$inc": {"score": 5000}}
         )
@@ -49,32 +50,20 @@ def env_test():
 
 
 @app.route("/login")
+@assert_json(json_passwd_schema, c.NO_PASSWORD_MSG, 401)
 def login():
-    try:
-        data = request.json
-        password = data["password"]
     
-    except KeyError:
-        return jsonify(c.NO_PASSWORD_MSG), 401
+    password = request.json["password"]
     
-    except TypeError:
-        return jsonify(c.NO_PASSWORD_MSG), 401
-
-
     if password == c.PASSWORD:
-        data = {
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30),
-        }
-        token = jwt.encode(data, c.SECRET_KEY)
+        
+        exp_date = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+        token = jwt.encode({"exp": exp_date}, c.SECRET_KEY)
 
         return jsonify({"token": token.decode("UTF-8")})
     
     else:
-        return (
-            jsonify("Could not verify"), 
-            401, 
-            {"WWW-Authenticate": 'Basic realm="Login Required"'},
-        )
+        return lib.jsonify_msg("Could not verify"), 401
 
 
 
@@ -83,53 +72,46 @@ def login():
 def view(post_id : int):
     
     try:
-        post = db.get_post(post_id)
-        db.increment_views(post_id)
+        post = lib.get_post(post_id)
+        lib.increment_views(post_id)
 
         return jsonify(post)
     
-    except db.DataDoesNotExist:
-        return jsonify(c.POST_NOT_FOUD_MSG), 404
+    except lib.DataDoesNotExist:
+        return lib.jsonify_msg(c.POST_NOT_FOUD_MSG), 404
     
-    except db.DatabaseFormatError:
-        return jsonify(c.DATABASE_FORMAT_ERROR_MSG), 500
+    except lib.DatabaseFormatError:
+        return lib.jsonify_msg(c.DATABASE_FORMAT_ERROR_MSG), 500
 
 
 
 @app.route("/<post_id>/create", methods=['POST'])
+@assert_json(post_content_schema, c.INVALID_CONTENT_MSG, 400)
 @convert(post_id=int)
 def create(post_id : int):
 
     try:
-        content = request.json      # type: str
-        if type(content) == str and len(content) > 0:
-            db.create_post(post_id, content)
-            return jsonify(c.POST_CREATED_MSG), 201
-
-        else:
-            return jsonify(c.INVALID_CONTENT_MSG), 400
+        content = request.json["content"]   # type: str
+        lib.create_post(post_id, content)
+        return lib.jsonify_msg(c.POST_CREATED_MSG), 201
 
     except DuplicateKeyError:
-        return jsonify(c.POST_ALREDY_EXISTS_MSG), 400
+        return lib.jsonify_msg(c.POST_ALREDY_EXISTS_MSG), 400
 
 
 
 @app.route("/<post_id>/edit", methods=['PUT'])
+@assert_json(post_content_schema, c.INVALID_CONTENT_MSG, 400)
 @convert(post_id=int)
 def edit(post_id : int):
     
     try:
-        content = request.json      # type: str
-        if type(content) == str and len(content) > 0:
+        content = request.json["content"]   # type: str
+        lib.update_post(post_id, content)
+        return lib.jsonify_msg(c.POST_UPDATED_MSG), 200
 
-            db.update_post(post_id, content)
-            return jsonify(c.POST_UPDATED_MSG), 200
-
-        else:
-            return jsonify(c.INVALID_CONTENT_MSG), 400
-
-    except db.DataDoesNotExist:
-        return jsonify(c.POST_NOT_FOUD_MSG), 404
+    except lib.DataDoesNotExist:
+        return lib.jsonify_msg(c.POST_NOT_FOUD_MSG), 404
 
 
 
@@ -138,11 +120,12 @@ def edit(post_id : int):
 def delete(post_id : int):
 
     try:
-        db.delete_post(post_id)
-        return jsonify(c.POST_DELETED_MSG), 200
+        lib.delete_post(post_id)
+        return lib.jsonify_msg(c.POST_DELETED_MSG), 200
     
-    except db.DataDoesNotExist:
-        return jsonify(c.POST_NOT_FOUD_MSG), 404
+    except lib.DataDoesNotExist:
+        return lib.jsonify_msg(c.POST_NOT_FOUD_MSG), 404
+
 
 
 if __name__ == "__main__":

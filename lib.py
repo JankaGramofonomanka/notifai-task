@@ -1,9 +1,13 @@
+from typing import TypedDict
+
+from flask import jsonify
 from pymongo import MongoClient
 from cerberus import Validator
 
 from types_and_schemas import PostInDB
 from types_and_schemas import PostWithViews
 from types_and_schemas import post_in_db_schema
+from types_and_schemas import JSONMessage
 
 from exceptions import DatabaseFormatError
 from exceptions import DataDoesNotExist
@@ -11,6 +15,11 @@ from exceptions import DataDoesNotExist
 import constants as c
 
 
+def json_msg(msg : str) -> JSONMessage:
+    return {"message": msg}
+
+def jsonify_msg(msg : str):
+    return jsonify(json_msg(msg))
 
 def get_collection():
     cluster = MongoClient(c.MONGODB_URI)

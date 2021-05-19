@@ -1,9 +1,12 @@
 from functools import wraps
 
 from flask import make_response, request, jsonify
+from cerberus import Validator
+from cerberus.validator import DocumentError
 import jwt
 
 import constants as c
+import lib
 
 
 
@@ -58,6 +61,38 @@ def require_token(func):
             return func(*args, **kwargs)
 
         except:
-            return jsonify({"message": "Token is invalid."}), 401
+            return jsonify(lib.json_msg("Token is invalid.")), 401
 
     return decorated
+
+
+
+
+def assert_json(schema, error_msg, error_code):
+
+    def decorator(func):
+        @wraps(func)
+        def decorated(*args, **kwargs):
+
+            validator = Validator(schema)
+
+            data = request.json
+
+            try:
+                if validator.validate(data):
+                    return func(*args, **kwargs)
+                    
+                else:
+                    return jsonify(lib.json_msg(error_msg)), error_code
+
+            except DocumentError:
+                return jsonify(lib.json_msg(error_msg)), error_code
+                
+    
+        return decorated
+
+    return decorator
+
+
+
+
