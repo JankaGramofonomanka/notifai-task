@@ -57,11 +57,10 @@ def require_token(func):
         
         try:
             data = jwt.decode(token, c.SECRET_KEY)
-
-            return func(*args, **kwargs)
-
         except:
             return jsonify(lib.json_msg("Token is invalid.")), 401
+
+        return func(*args, **kwargs)
 
     return decorated
 
