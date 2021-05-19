@@ -31,7 +31,9 @@ def login():
     
     if password == c.PASSWORD:
         
-        exp_date = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+        now = datetime.datetime.utcnow()
+        exp_time = datetime.timedelta(minutes=c.TOKEN_VALIDITY_TIME)
+        exp_date = now + exp_time
         token = jwt.encode({"exp": exp_date}, c.SECRET_KEY)
 
         return jsonify({"token": token.decode("UTF-8")})

@@ -8,6 +8,7 @@ DATABASE_NAME = "notifai-task-db"
 POST_COLLECTION_NAME = "posts"
 
 MAX_POST_LENGTH = 160
+TOKEN_VALIDITY_TIME = 30
 
 DATABASE_FORMAT_ERROR_MSG = "Data is corrupt."
 INVALID_CONTENT_MSG = "Request does not contain a valid post."
