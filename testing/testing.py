@@ -1,6 +1,5 @@
 import os
 import unittest
-from argparse import ArgumentParser
 import time
 
 import requests
