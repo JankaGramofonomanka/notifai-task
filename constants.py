@@ -6,7 +6,7 @@ PASSWORD                = os.environ["PASSWORD"]
 DATABASE_NAME           = os.environ["DATABASE_NAME"]
 POST_COLLECTION_NAME    = os.environ["POST_COLLECTION_NAME"]
 
-TOKEN_EXP_TIME = int(os.environ["TOKEN_EXP_TIME"])
+TOKEN_EXP_TIME = float(os.environ["TOKEN_EXP_TIME"])
 
 MAX_POST_LENGTH = 160
 
