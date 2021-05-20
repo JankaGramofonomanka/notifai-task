@@ -4,7 +4,7 @@ MONGODB_URI             = os.environ["MONGODB_URI"]
 SECRET_KEY              = os.environ["SECRET_KEY"]
 PASSWORD                = os.environ["PASSWORD"]
 DATABASE_NAME           = os.environ["DATABASE_NAME"]
-POST_COLLECTION_NAME    = os.environ["POST_COLLECTION_NAME"]
+POST_COLLECTION_NAME    = "posts"
 
 TOKEN_EXP_TIME = float(os.environ["TOKEN_EXP_TIME"])
 
