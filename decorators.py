@@ -88,11 +88,6 @@ def assert_id(func):
     @wraps(func)
     def decorated(post_id : str, **kwargs):
 
-        print(post_id)
-        print(type(post_id))
-        print(kwargs)
-
-
         bad_response = lib.jsonify_msg(c.INVALID_ID_MSG), 400
 
         # check if `post_id` represents a hexadecimal number
