@@ -3,7 +3,7 @@
 export MONGODB_URI="mongodb+srv://tester:9o0GybiOxzoLs1iA@cluster0.i3cvv.mongodb.net/notifai-task-db-test?retryWrites=true&w=majority"
 export SECRET_KEY="189b563guyeh9bnhhugyhqm3"
 export PASSWORD=password
-export TOKEN_EXP_TIME=0.08
+export TOKEN_EXP_TIME=0.1
 export DATABASE_NAME="notifai-task-db-test"
 
 
