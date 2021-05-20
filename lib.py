@@ -32,7 +32,7 @@ def get_collection():
 
 def get_post(post_id : ObjectId) -> PostWithViews:
     """
-    Returns a post with that has id `post_id`.
+    Returns a post that has id `post_id`.
     - If such posts does not exist, an exception is raised.
     - If the post returned by the database is in a wrong format, 
       an exception is raised.
