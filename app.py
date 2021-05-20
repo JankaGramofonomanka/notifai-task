@@ -112,7 +112,7 @@ def delete(post_id : ObjectId):
 
 # -----------------------------------------------------------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
 
 
 
