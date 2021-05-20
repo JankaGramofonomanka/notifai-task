@@ -24,7 +24,12 @@ class TestApp(unittest.TestCase):
         self.host = os.environ["HOST"]
         self.password = os.environ["PASSWORD"]
         self.token = self.get_token()
-        self.token_exp_time = 0.08
+
+        try:
+            self.token_exp_time = float(os.environ["TOKEN_EXP_TIME"])
+
+        except KeyError:
+            self.token_exp_time = None
 
         self.post_content = "whatever"
         self.data = {"content": self.post_content}
@@ -262,6 +267,10 @@ class TestApp(unittest.TestCase):
     
     
     def test_expiration(self):
+        
+        # If token expiration time is not provided, skip the test
+        if not self.token_exp_time:
+            return
 
         # wait for the token to expire
         time.sleep(self.token_exp_time * 60 + 5)
