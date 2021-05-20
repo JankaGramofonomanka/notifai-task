@@ -1,3 +1,4 @@
+import os
 import unittest
 from argparse import ArgumentParser
 import time
@@ -20,8 +21,8 @@ class TestApp(unittest.TestCase):
 
     def setUp(self):
 
-        self.host = "http://127.0.0.1:5000"
-        self.password = "password"
+        self.host = os.environ["HOST"]
+        self.password = os.environ["PASSWORD"]
         self.token = self.get_token()
         self.token_exp_time = 0.08
 
