@@ -8,6 +8,9 @@ The app is deployed on heroku.com,
 it runs on ```https://notifai-task.herokuapp.com```.
 
 ### Environment
+
+The app should use Python 3.8.
+
 To run the app one needs to set up the following environment variables:
 | Variable              | Description                                       |
 | --------------------- | ------------------------------------------------- |

@@ -1,5 +1,6 @@
 # notif.ai task - testing
 
+The tests should be run using Python 3.8.
 
 Testing is done by the python script ```testing.py```. 
 To run that stript, you need to set up the following envoronment variables:
