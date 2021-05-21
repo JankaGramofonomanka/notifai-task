@@ -125,7 +125,7 @@ Methods:
 
 URL: https://notifai-task.herokuapp.com/create
 
-Note: If you click on this URL, then "login" will be interpreted as an id
+Note: If you click on this URL, then "create" will be interpreted as an id
 of a post, since the method will be ```GET```, which is not allowed here.
     
 Allowed methods: ```POST```.
