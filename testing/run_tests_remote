@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+export HOST="https://notifai-task-test.herokuapp.com"
+export PASSWORD=password
+export TOKEN_EXP_TIME=0.1
+
+
+python testing.py
