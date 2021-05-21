@@ -89,6 +89,8 @@ https://app.swaggerhub.com/apis/JankaGramofonomanka/notifai-task-api/1.0.0
 ### Paths
 
 #### ```/login```
+
+URL: https://notifai-task.herokuapp.com/login
     
 Allowed methods: ```POST```.
 
@@ -117,6 +119,8 @@ Methods:
   
   
 #### ```/create```
+
+URL: https://notifai-task.herokuapp.com/create
     
 Allowed methods: ```POST```.
 
@@ -144,6 +148,11 @@ Methods:
   
   
 #### ```/{postId}```
+
+URL (example): https://notifai-task.herokuapp.com/60a53e22829684a3b51c39b5
+
+Note: the above URL is just an example, this particural ```postId``` 
+doesn't have to exist.
 
 Allowed methods: ```GET```, ```PUT```, ```DELETE```.
 
